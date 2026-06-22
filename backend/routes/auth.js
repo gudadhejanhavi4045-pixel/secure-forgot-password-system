@@ -1,148 +1,52 @@
 const express = require("express");
 const router = express.Router();
+const db = require("../db");
 
-router.post("/forgot-password", (req,res)=>{
-
-    res.json({
-    message:"Password reset successful",
-    password:newPassword
-});
-
-});
-
-module.exports = router;
-
-
-// Password Generator
-
-function generatePassword(){
-
-    let characters =
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-    let password = "";
-
-
-    for(let i=0;i<8;i++){
-
-        password += characters[
-            Math.floor(Math.random()*characters.length)
-        ];
-
-    }
-
-    return password;
-
-}
-
-
-
-// Forgot Password API
 
 router.post("/forgot-password",(req,res)=>{
 
+    const {identity} = req.body;
 
-    const identity = req.body.identity;
+
+    const newPassword = Math.random()
+        .toString(36)
+        .slice(-8);
+
+
+    const sql = `
+    UPDATE users 
+    SET password=? 
+    WHERE email=? OR phone=?
+    `;
 
 
     db.query(
-
-        "SELECT * FROM users WHERE email=? OR phone=?",
-
-        [
-            identity,
-            identity
-        ],
-
-
+        sql,
+        [newPassword, identity, identity],
         (err,result)=>{
 
 
             if(err){
 
-                return res.json(err);
+                console.log(err);
 
-            }
-
-
-
-            if(result.length===0){
-
-
-                return res.json({
-
-                    message:"User not found"
-
+                return res.status(500).json({
+                    error:"Database error"
                 });
 
             }
 
 
+            res.json({
 
-            let user=result[0];
+                message:"Password reset successful",
 
+                password:newPassword
 
-            let today =
-            new Date()
-            .toISOString()
-            .slice(0,10);
-
-
-
-            if(user.last_reset_date == today){
-
-
-                return res.json({
-
-                    message:
-                    "You can use this option only one time per day."
-
-                });
-
-
-            }
-
-
-
-            let newPassword =
-            generatePassword();
-
-
-
-            db.query(
-
-                "UPDATE users SET password=?, last_reset_date=? WHERE id=?",
-
-
-                [
-                    newPassword,
-                    today,
-                    user.id
-                ],
-
-
-                ()=>{
-
-
-                    res.json({
-
-                        message:
-                        "Password reset successful",
-
-                        password:newPassword
-
-                    });
-
-
-                }
-
-
-            );
-
+            });
 
 
         }
-
     );
 
 
