@@ -1,8 +1,15 @@
 const express = require("express");
-
 const router = express.Router();
 
-const db = require("../db");
+router.post("/forgot-password", (req,res)=>{
+
+    res.json({
+        message:"Password reset successful"
+    });
+
+});
+
+module.exports = router;
 
 
 // Password Generator
