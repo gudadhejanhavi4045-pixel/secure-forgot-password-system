@@ -20,37 +20,22 @@ router.post("/forgot-password",(req,res)=>{
     `;
 
 
-    db.query(
-        sql,
-        [newPassword, identity, identity],
-        (err,result)=>{
+   db.query(
+    "UPDATE users SET password=? WHERE email=? OR phone=?",
+    [newPassword, identity, identity],
+    (err,result)=>{
 
-
-            if(err){
-
-                console.log(err);
-
-                return res.status(500).json({
-                    error:"Database error"
-                });
-
-            }
-
-
-            res.json({
-
-                message:"Password reset successful",
-
-                password:newPassword
-
+        if(err){
+            console.log(err);
+            return res.status(500).json({
+                error:err.message
             });
-
-
         }
-    );
 
+        res.json({
+            message:"Password reset successful",
+            password:newPassword
+        });
 
-});
-
-
-module.exports = router;
+    }
+);
