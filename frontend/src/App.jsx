@@ -1,35 +1,24 @@
-import {BrowserRouter,Routes,Route} from "react-router-dom";
-
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import ForgotPassword from "./pages/ForgotPassword";
 
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
 
-function App(){
+        <Route 
+          path="/" 
+          element={<Navigate to="/forgot-password" />} 
+        />
 
+        <Route 
+          path="/forgot-password" 
+          element={<ForgotPassword />} 
+        />
 
-return(
-
-<BrowserRouter>
-
-<Routes>
-
-
-<Route
-
-path="/forgot-password"
-
-element={<ForgotPassword/>}
-
-/>
-
-
-</Routes>
-
-
-</BrowserRouter>
-
-)
-
+      </Routes>
+    </BrowserRouter>
+  );
 }
-
 
 export default App;

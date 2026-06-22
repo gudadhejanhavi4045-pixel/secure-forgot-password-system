@@ -1,160 +1,71 @@
-import {useState} from "react";
-import axios from "axios";
+import { useState } from "react";
 import "./ForgotPassword.css";
-
 
 function ForgotPassword(){
 
-const [identity,setIdentity] = useState("");
+    const [identity,setIdentity] = useState("");
+    const [message,setMessage] = useState("");
 
-const [message,setMessage] = useState("");
+    const resetPassword = async()=>{
 
-const [password,setPassword] = useState("");
+        const response = await fetch(
+        "https://secure-forgot-password-system.onrender.com/api/forgot-password",
+        {
+            method:"POST",
 
-const [loading,setLoading] = useState(false);
+            headers:{
+                "Content-Type":"application/json"
+            },
 
+            body:JSON.stringify({
+                identity:identity
+            })
+        });
 
+        const data = await response.json();
 
-const resetPassword = async()=>{
+        setMessage(
+            data.password 
+            ? "Your new password: " + data.password
+            : data.message
+        );
 
+    };
 
-setLoading(true);
 
-setMessage("");
+    return(
 
-setPassword("");
+        <div className="container">
 
+            <h1>Forgot Password</h1>
 
 
-try{
+            <input
 
+            type="text"
 
-const response = await axios.post(
+            placeholder="Enter Email or Phone"
 
-"http://localhost:5000/api/forgot-password",
+            value={identity}
 
-{
-identity:identity
-}
+            onChange={(e)=>setIdentity(e.target.value)}
 
-);
+            />
 
 
+            <button onClick={resetPassword}>
 
-setMessage(response.data.message);
+            Reset Password
 
+            </button>
 
-if(response.data.password){
 
-setPassword(response.data.password);
+            <p>{message}</p>
 
-}
 
+        </div>
 
-}
-
-catch(error){
-
-setMessage("Unable to connect to server");
-
-}
-
-
-setLoading(false);
-
-
-}
-
-
-
-return(
-
-<div className="container">
-
-
-<h1>
-Forgot Password
-</h1>
-
-
-<p>
-Reset your password using email or phone
-</p>
-
-
-
-<input
-
-type="text"
-
-placeholder="Enter Email or Phone"
-
-value={identity}
-
-onChange={(e)=>setIdentity(e.target.value)}
-
-/>
-
-
-
-<button onClick={resetPassword}>
-
-
-{
-
-loading ? "Processing..." : "Reset Password"
-
-}
-
-
-</button>
-
-
-
-{
-
-message &&
-
-<div className="message">
-
-{message}
-
-</div>
-
-}
-
-
-
-{
-
-password &&
-
-
-<div className="password">
-
-
-<h3>
-Generated Password
-</h3>
-
-
-<h2>
-{password}
-</h2>
-
-
-</div>
-
-
-}
-
-
-
-</div>
-
-
-)
-
+    )
 
 }
 
