@@ -3,9 +3,9 @@ const router = express.Router();
 const db = require("../db");
 
 
-router.post("/forgot-password",(req,res)=>{
+router.post("/forgot-password", (req, res) => {
 
-    const {identity} = req.body;
+    const { identity } = req.body;
 
 
     const newPassword = Math.random()
@@ -14,28 +14,41 @@ router.post("/forgot-password",(req,res)=>{
 
 
     const sql = `
-    UPDATE users 
-    SET password=? 
-    WHERE email=? OR phone=?
+        UPDATE users
+        SET password=?
+        WHERE email=? OR phone=?
     `;
 
 
-   db.query(
-    "UPDATE users SET password=? WHERE email=? OR phone=?",
-    [newPassword, identity, identity],
-    (err,result)=>{
+    db.query(
+        sql,
+        [newPassword, identity, identity],
+        (err, result) => {
 
-        if(err){
-            console.log(err);
-            return res.status(500).json({
-                error:err.message
+            if (err) {
+
+                console.log(err);
+
+                return res.status(500).json({
+                    error: err.message
+                });
+
+            }
+
+
+            res.json({
+
+                message: "Password reset successful",
+
+                password: newPassword
+
             });
+
         }
+    );
 
-        res.json({
-            message:"Password reset successful",
-            password:newPassword
-        });
 
-    }
-);
+});
+
+
+module.exports = router;
