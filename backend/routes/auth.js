@@ -4,8 +4,9 @@ const router = express.Router();
 router.post("/forgot-password", (req,res)=>{
 
     res.json({
-        message:"Password reset successful"
-    });
+    message:"Password reset successful",
+    password:newPassword
+});
 
 });
 
